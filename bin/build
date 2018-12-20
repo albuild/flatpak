@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+version=`cat version`
+exec docker build . --force-rm --build-arg version=$version -t albuild-flatpak:$version
