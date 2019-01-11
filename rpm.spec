@@ -1,10 +1,11 @@
 Summary: Flatpak for Amazon Linux 2
 Name: albuild-flatpak
-Version: 0.1.0
+Version: {{VERSION}}
 Release: 1%{?dist}
 Group: System Environment/Libraries
 License: BSD-3-Clause
-Source0: %{name}-%{version}.tar.gz
+Source0: {{SOURCE0}}
+Source1: {{SOURCE1}}
 URL: https://github.com/albuild/flatpak
 BuildArch: x86_64
 

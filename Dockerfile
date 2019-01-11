@@ -1,11 +1,13 @@
 FROM amazonlinux:2.0.20181114
 
 ARG version
+ARG target_version
+ENV ostree_version 2018.9
 
 RUN yum update -y
-RUN yum install -y wget https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-RUN wget http://mirror.centos.org/centos/7/os/x86_64/Packages/glib2-2.56.1-2.el7.x86_64.rpm
-RUN wget http://mirror.centos.org/centos/7/os/x86_64/Packages/glib2-devel-2.56.1-2.el7.x86_64.rpm
+RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+RUN curl -LO http://mirror.centos.org/centos/7/os/x86_64/Packages/glib2-2.56.1-2.el7.x86_64.rpm
+RUN curl -LO http://mirror.centos.org/centos/7/os/x86_64/Packages/glib2-devel-2.56.1-2.el7.x86_64.rpm
 RUN yum install -y glib2-2.56.1-2.el7.x86_64.rpm glib2-devel-2.56.1-2.el7.x86_64.rpm
 RUN yum install -y \
   autoconf \
@@ -41,7 +43,7 @@ RUN git clone https://github.com/ostreedev/ostree.git
 RUN git clone https://github.com/flatpak/flatpak.git
 
 WORKDIR /app/ostree
-RUN git checkout -b build v2018.9
+RUN git checkout -b build v$ostree_version
 RUN git submodule update --init --recursive
 RUN env NOCONFIGURE=1 ./autogen.sh
 RUN ./configure --prefix=/opt/albuild-flatpak/$version/ostree --enable-man=no
@@ -51,7 +53,7 @@ RUN make install
 ENV PKG_CONFIG_PATH=/opt/albuild-flatpak/$version/ostree/lib/pkgconfig:/usr/share/pkgconfig:/usr/lib64/pkgconfig
 
 WORKDIR /app/flatpak
-RUN git checkout -b build 1.1.1
+RUN git checkout -b build $target_version
 RUN git submodule update --init --recursive
 RUN env NOCONFIGURE=1 ./autogen.sh
 RUN ./configure --prefix=/usr --sysconfdir=/etc --enable-static
@@ -61,6 +63,9 @@ RUN make DESTDIR=/dest install
 RUN mkdir -p /root/rpmbuild/{SOURCES,SPECS}
 WORKDIR /root/rpmbuild
 ADD rpm.spec SPECS
+RUN sed -i "s,{{VERSION}},$version," SPECS/rpm.spec >/dev/null
+RUN sed -i "s,{{SOURCE0}},https://github.com/flatpak/flatpak/tree/$target_version," SPECS/rpm.spec >/dev/null
+RUN sed -i "s,{{SOURCE1}},https://github.com/ostreedev/ostree/tree/v$ostree_version," SPECS/rpm.spec >/dev/null
 RUN find /opt/albuild-flatpak/$version -type f >> SPECS/rpm.spec
 RUN find /opt/albuild-flatpak/$version -type l >> SPECS/rpm.spec
 RUN find /dest -type f | sed 's,^/dest,,' | sed 's,^\(/usr/share/man/man[15]/.\+\.[15]\)$,\1.gz,' >> SPECS/rpm.spec

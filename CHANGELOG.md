@@ -10,6 +10,10 @@ Based on [Keep a Changelog].
 
 ## Versions
 
+### 0.2.0
+
+* Flatpak 1.1.2
+
 ### 0.1.0
 
 * First release!

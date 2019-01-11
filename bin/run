@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
-version=`cat version`
+eval `cat env`
 exec docker run -it --rm albuild-flatpak:$version /bin/bash -l

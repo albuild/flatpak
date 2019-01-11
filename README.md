@@ -6,12 +6,12 @@ A set of prebuilt Flatpak binaries for Amazon Linux 2.
 
 ### Instructions
 
-1. Download the prebuilt package from [the Release page](https://github.com/albuild/flatpak/releases/tag/0.1.0).
+1. Download the prebuilt package from [the Release page](https://github.com/albuild/flatpak/releases/tag/0.2.0).
 
 1. Install the package.
 
     ```
-    sudo yum install -y albuild-flatpak-0.1.0-1.amzn2.x86_64.rpm
+    sudo yum install -y albuild-flatpak-0.2.0-1.amzn2.x86_64.rpm
     ```
 
 1. Logout and login.
